@@ -31,7 +31,7 @@ root.render(
           }
         },
         walletOptions: {
-          visible: true
+          visible: false
         }
       }}
       connectors={[new UnisatConnector(), new OKXConnector(), new BitgetConnector()]}

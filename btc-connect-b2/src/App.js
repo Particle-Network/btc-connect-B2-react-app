@@ -6,15 +6,20 @@ import { ethers } from 'ethers';
 const NetworkInfo = ({ btcNetwork, bsquaredNetwork }) => {
   return (
     <>
-      <div className="fixed top-4 right-4 bg-purple-800 text-white p-2 rounded-lg shadow-lg">
+      <div className="fixed top-4 right-4 bg-orange-500 text-white p-2 rounded-lg shadow-lg">
         <span className="text-lg font-bold">BTC network: {btcNetwork}</span>
       </div>
-      <div className="fixed top-4 left-4 bg-purple-800 text-white p-2 rounded-lg shadow-lg">
-        <span className="text-lg font-bold">Bsquared network: {bsquaredNetwork}</span>
+      <div className="fixed top-4 left-4 bg-yellow-500 text-black p-2 rounded-lg shadow-lg">
+        <span className="text-lg font-bold">B^2 network: {bsquaredNetwork}</span>
       </div>
     </>
   );
 };
+
+// Function to truncate addresses for display
+function truncateAddress(address) {
+  return address ? `${address.slice(0, 6)}...${address.slice(address.length - 4)}` : '';
+}
 
 const App = () => {
   // Hooks for Ethereum and Bitcoin provider and connect modal
@@ -29,37 +34,46 @@ const App = () => {
   const [copiedAddress, setCopiedAddress] = useState(null);
   const [evmAddress, setEvmAddress] = useState('');
   const [btcAddress, setBtcAddress] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  // Initialize custom Ethereum provider
-  const customProvider = new ethers.providers.Web3Provider(provider, "any");
+  // Initialize custom Ethereum provider— ethers v6 in this case
+  // For ethers v5 use: const customProvider = new ethers.providers.Web3Provider(provider, "any");
+  // Adapt the other ethers functions to V5 in case
+  const customProvider = provider ? new ethers.BrowserProvider(provider, "any") : null;
 
-  // Function to truncate addresses for display
-  function truncateAddress(address) {
-    return `${address.slice(0, 6)}...${address.slice(address.length - 4)}`;
-  }
-
-  // Determine the  B^2 network name based on chainId
+  // Determine the B^2 network name based on chainId
   const bsquaredNetwork = chainId === 1123 ? 'testnet' : chainId === 223 ? 'mainnet' : 'unknown';
 
-  // Effect to fetch balances and network information when the Bitcoun account changes
+  // Effect to fetch balances and network information when the Bitcoin account changes
   useEffect(() => {
-    if (accounts.length > 0) {
+    if (customProvider && account && accounts.length > 0) {
       (async () => {
-        // Fetch Ethereum balance
-        const balanceResponse = await customProvider.getBalance(account);
-        setBalanceEVM(parseFloat(ethers.utils.formatEther(balanceResponse)).toFixed(3));
+        try {
+          // Fetch Ethereum balance
+          const balanceResponse = await customProvider.getBalance(account);
+          setBalanceEVM(parseFloat(ethers.formatEther(balanceResponse)).toFixed(3));
 
-        // Fetch Bitcoin network and balance
-        const network = await getNetwork();
-        setBtcNetwork(network);
+          // Fetch Bitcoin network and balance
+          const network = await getNetwork();
+          setBtcNetwork(network);
 
-        const networkSuffix = network === 'livenet' ? 'main' : 'test3';
-        fetch(`https://api.blockcypher.com/v1/btc/${networkSuffix}/addrs/${accounts[0]}/balance`)
-          .then(response => response.json())
-          .then(data => setBalanceBTC(data.balance / 1e8));
+          const networkSuffix = network === 'livenet' ? 'main' : 'test3';
+          const response = await fetch(`https://api.blockcypher.com/v1/btc/${networkSuffix}/addrs/${accounts[0]}/balance`);
+
+          if (response.status === 429) {
+            setErrorMessage('Too many requests. Please try again later.');
+            return;
+          }
+
+          const data = await response.json();
+          setBalanceBTC(data.balance / 1e8);
+        } catch (error) {
+          console.error('Error fetching balances or network info:', error);
+          setErrorMessage('Error fetching data. Please try again.');
+        }
       })();
     }
-  }, [accounts, account]);
+  }, [customProvider, account, accounts, getNetwork]);
 
   // Handler to open connect modal
   const handleLogin = () => {
@@ -68,25 +82,32 @@ const App = () => {
 
   // Handler to execute Ethereum transaction
   const executeTxEvm = async () => {
-    const signer = customProvider.getSigner();
+    if (!customProvider) return;
 
+    const signer = customProvider.getSigner();
     const tx = {
       to: evmAddress,
-      value: ethers.utils.parseEther('0.01'),
+      value: ethers.parseEther('0.01'),
       data: "0x"
     };
 
-    const txResponse = await signer.sendTransaction(tx);
-    const txReceipt = await txResponse.wait();
-
-    alert(`Transaction Successful. Transaction Hash: ${txReceipt.transactionHash}`);
+    try {
+      const txResponse = await (await signer).sendTransaction(tx);
+      const txReceipt = await txResponse.wait();
+      alert(`Transaction Successful. Transaction Hash: ${txReceipt.hash}`);
+    } catch (error) {
+      console.error('Error executing EVM transaction:', error);
+    }
   };
 
   // Handler to execute Bitcoin transaction
   const executeTxBtc = async () => {
-    const hash = await sendBitcoin(btcAddress, 1);
-
-    alert(`Transaction Successful. Transaction Hash: ${hash}`);
+    try {
+      const hash = await sendBitcoin(btcAddress, 1); // Send 1 Sats
+      alert(`Transaction Successful. Transaction Hash: ${hash}`);
+    } catch (error) {
+      console.error('Error executing BTC transaction:', error);
+    }
   };
 
   // Handler to copy address to clipboard
@@ -96,12 +117,10 @@ const App = () => {
     setTimeout(() => setCopiedAddress(null), 2000);
   };
 
-
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <NetworkInfo btcNetwork={btcNetwork} bsquaredNetwork={bsquaredNetwork} />
-      <div className="flex space-x-4 mb-8">
+      <div className="flex space-x-4 mb-8 bg-slate-100 py-2 px-4 rounded-lg shadow-lg">
         <img src="https://i.imgur.com/EerK7MS.png" alt="Logo 1" className="w-64 h-64 object-contain" />
         <img src="https://i.imgur.com/I3rmeOX.png" alt="Logo 2" className="w-64 h-64 object-contain" />
       </div>
@@ -119,7 +138,7 @@ const App = () => {
             <div className="w-full p-4 bg-gray-800 rounded-lg mb-4">
               <span className="text-lg font-bold text-white">EVM equivalent generated address</span>
               <div className="flex items-center justify-between mt-2">
-                <span className="text-lg font-semibold text-white">{balanceEVM} BTC</span>
+                <span className="text-lg font-semibold text-white">{balanceEVM !== null ? `${balanceEVM} BTC` : 'Loading...'}</span>
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-400">{truncateAddress(account)}</span>
                   <button onClick={() => handleCopy(account)} className="text-gray-400 hover:text-white">
@@ -155,7 +174,7 @@ const App = () => {
             <div className="w-full p-4 bg-gray-800 rounded-lg mb-4">
               <span className="text-lg font-bold text-white">BTC Address address</span>
               <div className="flex items-center justify-between mt-2">
-                <span className="text-lg font-semibold text-white">{balanceBTC} BTC</span>
+                <span className="text-lg font-semibold text-white">{balanceBTC !== null ? `${balanceBTC} BTC` : (errorMessage || 'Loading...')}</span>
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-400">{truncateAddress(accounts[0])}</span>
                   <button onClick={() => handleCopy(accounts[0])} className="text-gray-400 hover:text-white">
