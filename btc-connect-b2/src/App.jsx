@@ -118,7 +118,7 @@ const App = () => {
                 </div>
               </div>
             </div>
-            <span className="text-lg text-white mb-2">Send BTC to</span>
+            <span className="text-lg text-white mb-2">Send 0.01 BTC to</span>
             <div className="w-full p-4 bg-gray-800 rounded-lg mb-4">
               <label htmlFor="evmAddress" className="text-lg font-bold text-white">Enter EVM Address</label>
               <input
@@ -154,7 +154,7 @@ const App = () => {
                 </div>
               </div>
             </div>
-            <span className="text-lg text-white mb-2">Send BTC to</span>
+            <span className="text-lg text-white mb-2">Send 1 Sats to</span>
             <div className="w-full p-4 bg-gray-800 rounded-lg mb-4">
               <label htmlFor="btcAddress" className="text-lg font-bold text-white">Enter BTC Address</label>
               <input
