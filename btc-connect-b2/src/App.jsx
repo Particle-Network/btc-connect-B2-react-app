@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useETHProvider, useBTCProvider, useConnectModal } from '@particle-network/btc-connectkit';
 import { ethers } from 'ethers';
-import './App.css';
 
+// Component to display network information
 const NetworkInfo = ({ btcNetwork, bsquaredNetwork }) => {
   return (
     <>
@@ -17,10 +17,12 @@ const NetworkInfo = ({ btcNetwork, bsquaredNetwork }) => {
 };
 
 const App = () => {
+  // Hooks for Ethereum and Bitcoin provider and connect modal
   const { provider, account, chainId } = useETHProvider();
   const { openConnectModal, disconnect } = useConnectModal();
   const { accounts, sendBitcoin, getNetwork } = useBTCProvider();
 
+  // State variables
   const [balanceEVM, setBalanceEVM] = useState(null);
   const [balanceBTC, setBalanceBTC] = useState(null);
   const [btcNetwork, setBtcNetwork] = useState('');
@@ -28,18 +30,26 @@ const App = () => {
   const [evmAddress, setEvmAddress] = useState('');
   const [btcAddress, setBtcAddress] = useState('');
 
+  // Initialize custom Ethereum provider
   const customProvider = new ethers.providers.Web3Provider(provider, "any");
 
+  // Function to truncate addresses for display
   function truncateAddress(address) {
     return `${address.slice(0, 6)}...${address.slice(address.length - 4)}`;
   }
 
+  // Determine the  B^2 network name based on chainId
+  const bsquaredNetwork = chainId === 1123 ? 'testnet' : chainId === 223 ? 'mainnet' : 'unknown';
+
+  // Effect to fetch balances and network information when the Bitcoun account changes
   useEffect(() => {
     if (accounts.length > 0) {
       (async () => {
+        // Fetch Ethereum balance
         const balanceResponse = await customProvider.getBalance(account);
         setBalanceEVM(parseFloat(ethers.utils.formatEther(balanceResponse)).toFixed(3));
 
+        // Fetch Bitcoin network and balance
         const network = await getNetwork();
         setBtcNetwork(network);
 
@@ -51,10 +61,12 @@ const App = () => {
     }
   }, [accounts, account]);
 
+  // Handler to open connect modal
   const handleLogin = () => {
     openConnectModal();
   };
 
+  // Handler to execute Ethereum transaction
   const executeTxEvm = async () => {
     const signer = customProvider.getSigner();
 
@@ -70,19 +82,21 @@ const App = () => {
     alert(`Transaction Successful. Transaction Hash: ${txReceipt.transactionHash}`);
   };
 
+  // Handler to execute Bitcoin transaction
   const executeTxBtc = async () => {
     const hash = await sendBitcoin(btcAddress, 1);
 
     alert(`Transaction Successful. Transaction Hash: ${hash}`);
   };
 
+  // Handler to copy address to clipboard
   const handleCopy = (address) => {
     navigator.clipboard.writeText(address);
     setCopiedAddress(address);
     setTimeout(() => setCopiedAddress(null), 2000);
   };
 
-  const bsquaredNetwork = chainId === 1123 ? 'testnet' : chainId === 223 ? 'mainnet' : 'unknown';
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
@@ -101,7 +115,7 @@ const App = () => {
         </button>
       ) : (
         <div className="flex justify-center space-x-4 w-full max-w-5xl mb-8">
-          <div className="bg-gray-900 p-6 rounded-lg shadow-lg flex-1 max-w-xs w-full flex flex-col">
+          <div className="bg-gray-900 p-6 rounded-lg shadow-lg flex-1 max-w-lg w-full flex flex-col">
             <div className="w-full p-4 bg-gray-800 rounded-lg mb-4">
               <span className="text-lg font-bold text-white">EVM equivalent generated address</span>
               <div className="flex items-center justify-between mt-2">
@@ -137,7 +151,7 @@ const App = () => {
               Execute EVM Transaction
             </button>
           </div>
-          <div className="bg-gray-900 p-6 rounded-lg shadow-lg flex-1 max-w-xs w-full flex flex-col">
+          <div className="bg-gray-900 p-6 rounded-lg shadow-lg flex-1 max-w-lg w-full flex flex-col">
             <div className="w-full p-4 bg-gray-800 rounded-lg mb-4">
               <span className="text-lg font-bold text-white">BTC Address address</span>
               <div className="flex items-center justify-between mt-2">
