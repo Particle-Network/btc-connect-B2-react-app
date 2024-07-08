@@ -37,7 +37,7 @@ BTC Connect takes advantage of ERC-4337 alongside (Bitcoin) Layer-2 EVM-compatib
 
 ##
 
-👉 Try the demo: [Particle Network-B^2 BTC Connect demo](Particle Network-B^2 BTC Connect demo)
+👉 Try the demo: [Particle Network-B² BTC Connect demo](https://btc-connect-b2-react-app.vercel.app/)
 
 👉 Learn more about Particle Network: https://particle.network
 
