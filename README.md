@@ -2,10 +2,9 @@
   <a href="https://particle.network/">
     <img src="https://i.imgur.com/P391e8h.png" />
   </a>
-  <h3>
- Particle Network BTC Connect B² Demo
-  </h3>
 </div>
+
+# Particle Network BTC Connect B² Demo— React
 
 ⚡️ Demo application showcasing the implementation of Particle Network's BTC Connect product to facilitate ERC-4337 Account Abstraction (through native Bitcoin wallets) on B², a ZK-Rollup for Bitcoin boasting quick transaction speeds, low fees, and, of course, data settlement on Bitcoin.
 
