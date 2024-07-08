@@ -108,13 +108,13 @@ Use `react-app-rewired` and install the missing modules to fix this.
 If you are using Yarn
 
 ```sh
-yarn add --dev react-app-rewired crypto-browserify stream-browserify assert stream-http https-browserify os-browserify url buffer process
+yarn add --dev react-app-rewired crypto-browserify stream-browserify assert stream-http https-browserify os-browserify url buffer process vm-browserify
 ```
 
 If you are using NPM
 
 ```sh
-npm install --save-dev react-app-rewired crypto-browserify stream-browserify assert stream-http https-browserify os-browserify url buffer process
+npm install --save-dev react-app-rewired crypto-browserify stream-browserify assert stream-http https-browserify os-browserify url buffer process vm-browserify
 ```
 
 Then Create a `config-overrides.js` in the root of your project directory and add the following:
@@ -131,15 +131,17 @@ module.exports = function override(config) {
         "http": require.resolve("stream-http"),
         "https": require.resolve("https-browserify"),
         "os": require.resolve("os-browserify"),
-        "url": require.resolve("url")
- })
+        "url": require.resolve("url"),
+        "vm": require.resolve("vm-browserify")
+    })
     config.resolve.fallback = fallback;
+    config.ignoreWarnings = [/Failed to parse source map/];
     config.plugins = (config.plugins || []).concat([
         new webpack.ProvidePlugin({
- process: 'process/browser',
- Buffer: ['buffer', 'Buffer']
- })
- ])
+            process: 'process/browser',
+            Buffer: ['buffer', 'Buffer']
+        })
+    ])
     return config;
 }
 ```

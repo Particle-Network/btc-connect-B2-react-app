@@ -9,9 +9,11 @@ module.exports = function override(config) {
         "http": require.resolve("stream-http"),
         "https": require.resolve("https-browserify"),
         "os": require.resolve("os-browserify"),
-        "url": require.resolve("url")
+        "url": require.resolve("url"),
+        "vm": require.resolve("vm-browserify")
     })
     config.resolve.fallback = fallback;
+    config.ignoreWarnings = [/Failed to parse source map/];
     config.plugins = (config.plugins || []).concat([
         new webpack.ProvidePlugin({
             process: 'process/browser',
