@@ -35,7 +35,7 @@ BTC Connect takes advantage of ERC-4337 alongside (Bitcoin) Layer-2 EVM-compatib
 
 ##
 
-👉 Try the demo: [https://btc-connect-b2-react-app.vercel.app](Particle Network-B^2 BTC Connect demo)
+👉 Try the demo: [Particle Network-B^2 BTC Connect demo](Particle Network-B^2 BTC Connect demo)
 
 👉 Learn more about Particle Network: https://particle.network
 
@@ -56,7 +56,8 @@ cd btc-connect-b2
 ```sh
 yarn install
 ```
-OR
+Or
+
 ```sh
 npm install
 ```
@@ -92,7 +93,7 @@ cd particle-network-project
 
 ## Install Tailwind CSS
 
-This step is optional only if you want to use Tailwind CSS for the styling.
+This step is optional; follow it only if you want to use Tailwind CSS for the styling.
 
 Follow the instructions in the [Tailwind CSS docs](https://tailwindcss.com/docs/guides/create-react-app).
 
