@@ -24,9 +24,9 @@ Follow the [Quickstart](#quickstart) instructions to spin up the project, or fol
 ## ₿ BTC Connect
 BTC Connect takes advantage of ERC-4337 alongside (Bitcoin) Layer-2 EVM-compatible blockchains to leverage a Smart Account, Paymaster, and Bundler natively within Bitcoin wallets (connected to through a Bitcoin-specific modal also provided by BTC Connect). At its core, BTC Connect enables existing BTC wallets to control smart accounts on Layer-2s.
 
-![](https://imgur.com/a/j6IkqxO)
+![](https://i.imgur.com/7bZ3dGw.png)
 
-##
+## Deploy with Vercel
 
 <p align="center">
 <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsoos3d%2Fbtc-connect-B2-react-app%2Ftree%2Fmain%2Fbtc-connect-b2&env=REACT_APP_APP_ID,REACT_APP_PROJECT_ID,REACT_APP_CLIENT_KEY&demo-title=Particle%20Network-B%5E2-BTC%20Connect%20demo&demo-url=https%3A%2F%2Fbtc-connect-b2-react-app.vercel.app%2F"><img src="https://vercel.com/button" alt="Deploy with Vercel"/></a>
