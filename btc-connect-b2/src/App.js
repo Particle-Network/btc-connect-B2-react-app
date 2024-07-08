@@ -31,10 +31,11 @@ const App = () => {
   const [balanceEVM, setBalanceEVM] = useState(null);
   const [balanceBTC, setBalanceBTC] = useState(null);
   const [btcNetwork, setBtcNetwork] = useState('');
-  const [copiedAddress, setCopiedAddress] = useState(null);
-  const [evmAddress, setEvmAddress] = useState('');
-  const [btcAddress, setBtcAddress] = useState('');
+
+  const [evmAddress, setEvmAddress] = useState(''); // State to get the address from the UI input
+  const [btcAddress, setBtcAddress] = useState(''); // State to get the address from the UI input
   const [errorMessage, setErrorMessage] = useState('');
+  const [copiedAddress, setCopiedAddress] = useState(null); 
 
   // Initialize custom Ethereum provider— ethers v6 in this case
   // For ethers v5 use: const customProvider = new ethers.providers.Web3Provider(provider, "any");
@@ -46,45 +47,51 @@ const App = () => {
 
   // Effect to fetch balances and network information when the Bitcoin account changes
   useEffect(() => {
-    if (customProvider && account && accounts.length > 0) {
-      (async () => {
-        try {
-          // Fetch Ethereum balance
-          const balanceResponse = await customProvider.getBalance(account);
-          setBalanceEVM(parseFloat(ethers.formatEther(balanceResponse)).toFixed(3));
-
-          // Fetch Bitcoin network and balance
-          const network = await getNetwork();
-          setBtcNetwork(network);
-
-          const networkSuffix = network === 'livenet' ? 'main' : 'test3';
-          const response = await fetch(`https://api.blockcypher.com/v1/btc/${networkSuffix}/addrs/${accounts[0]}/balance`);
-
-          if (response.status === 429) {
-            setErrorMessage('Too many requests. Please try again later.');
-            return;
-          }
-
-          const data = await response.json();
-          setBalanceBTC(data.balance / 1e8);
-        } catch (error) {
-          console.error('Error fetching balances or network info:', error);
-          setErrorMessage('Error fetching data. Please try again.');
+    if (!customProvider || !account || !accounts.length) return;
+  
+    const fetchBalancesAndNetwork = async () => {
+      try {
+        // Fetch Ethereum balance
+        const balanceResponse = await customProvider.getBalance(account);
+        setBalanceEVM(parseFloat(ethers.formatEther(balanceResponse)).toFixed(3));
+  
+        // Fetch Bitcoin network and balance
+        const network = await getNetwork();
+        setBtcNetwork(network);
+  
+        const networkSuffix = network === 'livenet' ? 'main' : 'test3';
+        const response = await fetch(`https://api.blockcypher.com/v1/btc/${networkSuffix}/addrs/${accounts[0]}/balance`);
+  
+        if (response.status === 429) {
+          setErrorMessage('Too many requests. Please try again later.');
+          return;
         }
-      })();
-    }
+  
+        const data = await response.json();
+        setBalanceBTC(data.balance / 1e8);
+      } catch (error) {
+        console.error('Error fetching balances or network info:', error);
+        setErrorMessage('Error fetching data. Please try again.');
+      }
+    };
+  
+    fetchBalancesAndNetwork();
   }, [customProvider, account, accounts, getNetwork]);
+  
 
   // Handler to open connect modal
   const handleLogin = () => {
-    openConnectModal();
+    if (!accounts.length) {
+      openConnectModal();
+    }
   };
 
   // Handler to execute Ethereum transaction
   const executeTxEvm = async () => {
     if (!customProvider) return;
 
-    const signer = customProvider.getSigner();
+    // Get the signer object from the customProvider
+    const signer = await customProvider.getSigner();
     const tx = {
       to: evmAddress,
       value: ethers.parseEther('0.01'),
@@ -92,7 +99,7 @@ const App = () => {
     };
 
     try {
-      const txResponse = await (await signer).sendTransaction(tx);
+      const txResponse = await signer.sendTransaction(tx);
       const txReceipt = await txResponse.wait();
       alert(`Transaction Successful. Transaction Hash: ${txReceipt.hash}`);
     } catch (error) {
