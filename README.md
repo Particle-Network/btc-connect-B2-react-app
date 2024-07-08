@@ -19,6 +19,8 @@ This project is built using the following:
 - Particle Network's [BTC Connect](https://developers.particle.network/docs/btc-connect)
 - ethers.js V6.x.x
 
+> Note that the project is inside the `btc-connect-b2` directory.
+
 Follow the [Quickstart](#quickstart) instructions to spin up the project, or follow the [project setup instructions](#create-a-react-project-from-scratch) to configure the React project from scratch. 
 
 ## ₿ BTC Connect
