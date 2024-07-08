@@ -10,6 +10,8 @@
 
 ## Project description
 
+This demo allows a user to connect a Bitcoin native wallet to the app and transfer BTC to an address via both the B² and Bitcoin network using the native Bitcoin wallet as the only interaction point. 
+
 This project is built using the following: 
 
 - React native using `npx create-react-app`
