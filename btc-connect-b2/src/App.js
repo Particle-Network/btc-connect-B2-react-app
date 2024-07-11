@@ -1,4 +1,10 @@
 import React, { useState, useEffect } from 'react';
+
+// UI component to display links to the Particle sites
+import LinksGrid from "./components/Links";
+import Header from "./components/Header";
+
+// BTC Connect related imports
 import { useETHProvider, useBTCProvider, useConnectModal } from '@particle-network/btc-connectkit';
 import { ethers } from 'ethers';
 
@@ -124,13 +130,14 @@ const App = () => {
     setTimeout(() => setCopiedAddress(null), 2000);
   };
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+  return ( 
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-black">
       <NetworkInfo btcNetwork={btcNetwork} bsquaredNetwork={bsquaredNetwork} />
-      <div className="flex space-x-4 mb-8 bg-slate-100 py-2 px-4 rounded-lg shadow-lg">
-        <img src="https://i.imgur.com/EerK7MS.png" alt="Logo 1" className="w-64 h-64 object-contain" />
-        <img src="https://i.imgur.com/I3rmeOX.png" alt="Logo 2" className="w-64 h-64 object-contain" />
-      </div>
+      <div className="flex space-x-2 mb-4 bg-slate-100 py-2 px-2 rounded-lg shadow-lg">
+  <img src="https://i.imgur.com/EerK7MS.png" alt="Logo 1" className="w-32 h-32 object-contain" />
+  <img src="https://i.imgur.com/I3rmeOX.png" alt="Logo 2" className="w-32 h-32 object-contain" />
+</div>
+
       {!account ? (
         <button
           className="flex items-center justify-center bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 px-6 rounded-full"
@@ -141,7 +148,7 @@ const App = () => {
         </button>
       ) : (
         <div className="flex justify-center space-x-4 w-full max-w-5xl mb-8">
-          <div className="bg-gray-900 p-6 rounded-lg shadow-lg flex-1 max-w-lg w-full flex flex-col">
+          <div className="border border-purple-500 p-6 rounded-lg">
             <div className="w-full p-4 bg-gray-800 rounded-lg mb-4">
               <span className="text-lg font-bold text-white">EVM equivalent generated address</span>
               <div className="flex items-center justify-between mt-2">
@@ -177,7 +184,7 @@ const App = () => {
               Execute EVM Transaction
             </button>
           </div>
-          <div className="bg-gray-900 p-6 rounded-lg shadow-lg flex-1 max-w-lg w-full flex flex-col">
+          <div className="border border-purple-500 p-6 rounded-lg">
             <div className="w-full p-4 bg-gray-800 rounded-lg mb-4">
               <span className="text-lg font-bold text-white">BTC Address address</span>
               <div className="flex items-center justify-between mt-2">
@@ -223,6 +230,7 @@ const App = () => {
           Logout
         </button>
       )}
+      <LinksGrid />
     </div>
   );
 };
