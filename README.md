@@ -86,7 +86,7 @@ You can follow these instructions if you want to configure the React project fro
 ### Create a React project
 
 ```sh
-npx create-react-app 
+npx create-react-app particle-network-project
 ```
 
 ```sh
