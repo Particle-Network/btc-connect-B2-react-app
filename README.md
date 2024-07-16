@@ -108,13 +108,13 @@ Use `react-app-rewired` and install the missing modules to fix this.
 If you are using Yarn
 
 ```sh
-yarn add --dev react-app-rewired crypto-browserify stream-browserify assert stream-http https-browserify os-browserify url buffer process vm-browserify
+yarn add --dev react-app-rewired crypto-browserify stream-browserify assert stream-http https-browserify os-browserify url buffer process vm-browserify browserify-zlib
 ```
 
 If you are using NPM
 
 ```sh
-npm install --save-dev react-app-rewired crypto-browserify stream-browserify assert stream-http https-browserify os-browserify url buffer process vm-browserify
+npm install --save-dev react-app-rewired crypto-browserify stream-browserify assert stream-http https-browserify os-browserify url buffer process vm-browserify browserify-zlib
 ```
 
 Then Create a `config-overrides.js` in the root of your project directory and add the following:
